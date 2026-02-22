@@ -311,6 +311,9 @@ export default function App() {
         dlog.info("Channels", `Loaded ${channels.length} channels`, channels.map((c) => ({ id: c.id, name: c.name })));
         dispatch({ type: "SET_CHANNELS", channels });
         setChannelsLoadedOnce(true);
+      }).catch((err) => {
+        dlog.error("Channels", `Failed to load channels: ${err}`);
+        setChannelsLoadedOnce(true); // Stop loading even on error
       });
     }
   }, [state.user]);
