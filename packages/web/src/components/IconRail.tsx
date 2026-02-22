@@ -69,6 +69,31 @@ export function IconRail({ onToggleTheme, onOpenSettings, theme }: IconRailProps
         }
       />
 
+      {/* Swarms */}
+      <RailIcon
+        label="Swarms"
+        active={state.activeView === "swarms"}
+        onClick={() => setView("swarms")}
+        icon={
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <circle cx="12" cy="12" r="9" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v8m-4-4h8" />
+          </svg>
+        }
+      />
+
+      {/* Deck */}
+      <RailIcon
+        label="Bot Deck"
+        active={state.activeView === "deck"}
+        onClick={() => setView("deck")}
+        icon={
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+          </svg>
+        }
+      />
+
       <div className="flex-1" />
 
       {/* Settings */}

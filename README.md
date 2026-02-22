@@ -10,6 +10,15 @@ BotsChat gives you a modern, Slack-like web UI to interact with your OpenClaw ag
 
 ## Key Features
 
+### 🐝 Multi-Agent Swarms
+
+**BotsChat RoundTable Edition** introduces powerful multi-agent coordination:
+
+- **Swarms** — Create groups of agents that work together
+- **Round Table Mode** — Multiple agents participate in the same conversation thread simultaneously, with each agent responding to user messages and seeing each other's responses
+- **Bot Deck View** — Side-by-side multi-column layout inspired by openclaw-deck, chat with 2-7 agents simultaneously
+- **Divide & Conquer** — Swarm leader coordinates task distribution among members for parallel execution
+
 ### Structured Conversation Management
 
 BotsChat organizes your conversations through a **Channel → Session → Thread** three-layer hierarchy, keeping complex agent interactions clean and navigable:

@@ -1,7 +1,7 @@
 /** Minimal reactive store using React context + useState. */
 
 import { createContext, useContext } from "react";
-import type { Agent as ApiAgent, Channel, Task, TaskWithChannel, Job, ModelInfo, Session } from "./api";
+import type { Agent as ApiAgent, Channel, Task, TaskWithChannel, Job, ModelInfo, Session, Swarm, SwarmMember, SwarmSession } from "./api";
 
 export type ChatMessage = {
   id: string;
@@ -21,7 +21,7 @@ export type ChatMessage = {
   mediaEncrypted?: boolean;
 };
 
-export type ActiveView = "messages" | "automations";
+export type ActiveView = "messages" | "automations" | "swarms" | "deck";
 
 export type AppState = {
   user: { id: string; email: string; displayName?: string | null } | null;
@@ -57,6 +57,14 @@ export type AppState = {
   selectedCronTaskId: string | null;
   cronJobs: Job[];
   selectedCronJobId: string | null;
+  // Swarm state
+  swarms: Swarm[];
+  selectedSwarmId: string | null;
+  swarmMembers: SwarmMember[];
+  swarmSessions: SwarmSession[];
+  selectedSwarmSessionId: string | null;
+  isRoundTableMode: boolean;
+  deckAgents: { agentId: string; sessionKey: string; name: string; color: string }[];
 };
 
 export const initialState: AppState = {
@@ -89,6 +97,14 @@ export const initialState: AppState = {
   selectedCronTaskId: null,
   cronJobs: [],
   selectedCronJobId: null,
+  // Swarm initial state
+  swarms: [],
+  selectedSwarmId: null,
+  swarmMembers: [],
+  swarmSessions: [],
+  selectedSwarmSessionId: null,
+  isRoundTableMode: false,
+  deckAgents: [],
 };
 
 export type AppAction =
@@ -131,6 +147,17 @@ export type AppAction =
   | { type: "ADD_CRON_JOB"; job: Job }
   | { type: "UPDATE_CRON_JOB"; job: Job }
   | { type: "APPEND_JOB_OUTPUT"; jobId: string; text: string }
+  // Swarm actions
+  | { type: "SET_SWARMS"; swarms: Swarm[] }
+  | { type: "SELECT_SWARM"; swarmId: string | null }
+  | { type: "SET_SWARM_MEMBERS"; members: SwarmMember[] }
+  | { type: "ADD_SWARM_MEMBER"; member: SwarmMember }
+  | { type: "REMOVE_SWARM_MEMBER"; memberId: string }
+  | { type: "SET_SWARM_SESSIONS"; sessions: SwarmSession[] }
+  | { type: "SELECT_SWARM_SESSION"; sessionId: string | null }
+  | { type: "ADD_SWARM_SESSION"; session: SwarmSession }
+  | { type: "SET_ROUND_TABLE_MODE"; enabled: boolean }
+  | { type: "SET_DECK_AGENTS"; agents: { agentId: string; sessionKey: string; name: string; color: string }[] }
   | { type: "LOGOUT" };
 
 export function appReducer(state: AppState, action: AppAction): AppState {
@@ -485,6 +512,40 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         cronJobs: updateSummary(state.cronJobs),
       };
     }
+    // Swarm reducer cases
+    case "SET_SWARMS":
+      return { ...state, swarms: action.swarms };
+    case "SELECT_SWARM":
+      return {
+        ...state,
+        selectedSwarmId: action.swarmId,
+        swarmMembers: [],
+        swarmSessions: [],
+        selectedSwarmSessionId: null,
+      };
+    case "SET_SWARM_MEMBERS":
+      return { ...state, swarmMembers: action.members };
+    case "ADD_SWARM_MEMBER":
+      return { ...state, swarmMembers: [...state.swarmMembers, action.member] };
+    case "REMOVE_SWARM_MEMBER":
+      return {
+        ...state,
+        swarmMembers: state.swarmMembers.filter((m) => m.id !== action.memberId),
+      };
+    case "SET_SWARM_SESSIONS":
+      return { ...state, swarmSessions: action.sessions };
+    case "SELECT_SWARM_SESSION":
+      return {
+        ...state,
+        selectedSwarmSessionId: action.sessionId,
+        messages: action.sessionId ? state.messages : [],
+      };
+    case "ADD_SWARM_SESSION":
+      return { ...state, swarmSessions: [...state.swarmSessions, action.session] };
+    case "SET_ROUND_TABLE_MODE":
+      return { ...state, isRoundTableMode: action.enabled };
+    case "SET_DECK_AGENTS":
+      return { ...state, deckAgents: action.agents };
     case "LOGOUT":
       return { ...initialState };
     default:

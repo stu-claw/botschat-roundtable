@@ -337,3 +337,83 @@ export const setupApi = {
       "/setup/cloud-url",
     ),
 };
+
+// ---- Swarms ----
+export type SwarmMode = "roundtable" | "divide_conquer" | "panel" | "deck";
+
+export type SwarmMemberRole = "leader" | "member" | "observer";
+
+export type SwarmMember = {
+  id: string;
+  swarmId: string;
+  agentId: string;
+  role: SwarmMemberRole;
+  orderIndex: number;
+  config?: Record<string, unknown>;
+  agentName?: string;
+  agentColor?: string;
+};
+
+export type Swarm = {
+  id: string;
+  name: string;
+  description?: string;
+  mode: SwarmMode;
+  leaderAgentId?: string;
+  config?: Record<string, unknown>;
+  createdBy: string;
+  createdAt: number;
+  updatedAt: number;
+  members?: SwarmMember[];
+};
+
+export type SwarmSession = {
+  id: string;
+  swarmId: string;
+  sessionKey: string;
+  mode: "roundtable" | "deck";
+  status: "active" | "paused" | "completed";
+  contextSharing: boolean;
+  createdBy: string;
+  createdAt: number;
+  updatedAt: number;
+};
+
+export type SwarmMessage = {
+  id: string;
+  swarmSessionId: string;
+  messageId: string;
+  agentId?: string;
+  agentName?: string;
+  agentColor?: string;
+  messageType: "response" | "reaction" | "suggestion" | "consensus";
+  parentMessageId?: string;
+  createdAt: number;
+};
+
+export const swarmsApi = {
+  list: () => request<{ swarms: Swarm[] }>("GET", "/swarms"),
+  get: (id: string) => request<{ swarm: Swarm; members: SwarmMember[] }>("GET", `/swarms/${id}`),
+  create: (data: { name: string; description?: string; mode: SwarmMode; leaderAgentId?: string; config?: Record<string, unknown> }) =>
+    request<Swarm>("POST", "/swarms", data),
+  update: (id: string, data: Partial<Pick<Swarm, "name" | "description" | "mode" | "leaderAgentId" | "config">>) =>
+    request<{ ok: boolean }>("PATCH", `/swarms/${id}`, data),
+  delete: (id: string) => request<{ ok: boolean }>("DELETE", `/swarms/${id}`),
+  // Members
+  addMember: (swarmId: string, data: { agentId: string; role?: SwarmMemberRole; orderIndex?: number; config?: Record<string, unknown> }) =>
+    request<SwarmMember>("POST", `/swarms/${swarmId}/members`, data),
+  removeMember: (swarmId: string, memberId: string) =>
+    request<{ ok: boolean }>("DELETE", `/swarms/${swarmId}/members/${memberId}`),
+  updateMember: (swarmId: string, memberId: string, data: Partial<Pick<SwarmMember, "role" | "orderIndex" | "config">>) =>
+    request<{ ok: boolean }>("PATCH", `/swarms/${swarmId}/members/${memberId}`, data),
+  // Sessions
+  createSession: (swarmId: string, data: { mode?: "roundtable" | "deck"; contextSharing?: boolean }) =>
+    request<SwarmSession>("POST", `/swarms/${swarmId}/sessions`, data),
+  listSessions: (swarmId: string) =>
+    request<{ sessions: SwarmSession[] }>("GET", `/swarms/${swarmId}/sessions`),
+  endSession: (swarmId: string, sessionId: string) =>
+    request<{ ok: boolean }>("POST", `/swarms/${swarmId}/sessions/${sessionId}/end`),
+  // Round table messages
+  sendRoundTableMessage: (swarmId: string, sessionId: string, data: { text: string; targetAgentIds?: string[] }) =>
+    request<{ messageId: string; distributed: number }>("POST", `/swarms/${swarmId}/sessions/${sessionId}/messages`, data),
+};

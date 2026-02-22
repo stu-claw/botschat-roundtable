@@ -29,6 +29,9 @@ import { AccountSettings } from "./components/AccountSettings";
 import { DebugLogPanel } from "./components/DebugLogPanel";
 import { CronSidebar } from "./components/CronSidebar";
 import { CronDetail } from "./components/CronDetail";
+import { SwarmSidebar } from "./components/SwarmSidebar";
+import { SwarmDetail } from "./components/SwarmDetail";
+import { DeckView } from "./components/DeckView";
 import { ResizeHandle } from "./components/ResizeHandle";
 import { useIsMobile } from "./hooks/useIsMobile";
 import { MobileLayout } from "./components/MobileLayout";
@@ -36,6 +39,7 @@ import { dlog } from "./debug-log";
 import { E2eService } from "./e2e";
 import { gtagPageView } from "./analytics";
 import { randomUUID } from "./utils/uuid";
+import { swarmsApi } from "./api";
 
 export default function App() {
   const [state, dispatch] = useReducer(appReducer, initialState, (init): AppState => {
@@ -304,6 +308,19 @@ export default function App() {
       });
     }
   }, [state.user]);
+
+  // ---- Load swarms when switching to swarms view ----
+  useEffect(() => {
+    if (state.user && state.activeView === "swarms") {
+      dlog.api("Swarms", "Loading swarms list");
+      swarmsApi.list().then(({ swarms }) => {
+        dlog.info("Swarms", `Loaded ${swarms.length} swarms`);
+        dispatch({ type: "SET_SWARMS", swarms });
+      }).catch((err) => {
+        dlog.error("Swarms", `Failed to load swarms: ${err}`);
+      });
+    }
+  }, [state.user, state.activeView]);
 
   // ---- Load cron tasks when switching to automations view ----
   useEffect(() => {
@@ -1015,6 +1032,8 @@ export default function App() {
   const hasSession = Boolean(state.selectedSessionKey);
 
   const isAutomationsView = state.activeView === "automations";
+  const isSwarmsView = state.activeView === "swarms";
+  const isDeckView = state.activeView === "deck";
 
   // ---- Mobile layout ----
   if (isMobile) {
@@ -1055,7 +1074,7 @@ export default function App() {
             >
               {/* Sidebar panel */}
               <Panel id="sidebar" defaultSize="15%" minSize="5%" maxSize="30%">
-                {isAutomationsView ? <CronSidebar /> : <Sidebar />}
+                {isAutomationsView ? <CronSidebar /> : isSwarmsView ? <SwarmSidebar /> : <Sidebar />}
               </Panel>
 
               <ResizeHandle />
@@ -1064,6 +1083,10 @@ export default function App() {
               <Panel id="content">
                 {isAutomationsView ? (
                   <CronDetail />
+                ) : isSwarmsView ? (
+                  <SwarmDetail />
+                ) : isDeckView ? (
+                  <DeckView />
                 ) : (
                   <div className="flex-1 flex flex-col min-w-0 h-full">
                     {hasSession ? (
