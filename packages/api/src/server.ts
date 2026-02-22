@@ -20,19 +20,20 @@ const app = express();
 const server = createServer(app);
 const wss = new WebSocketServer({ server, path: '/api/ws' });
 
-// Middleware - CORS allows multiple frontend origins
+// Middleware - CORS allows all origins for development
 app.use(cors({
-  origin: [
-    'http://localhost:3000',
-    'http://localhost:3003',
-    'http://localhost:3004',
-    'http://127.0.0.1:3000',
-    'http://127.0.0.1:3003',
-    'http://127.0.0.1:3004',
-  ],
-  credentials: true
+  origin: true,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 app.use(express.json());
+
+// Debug logging
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.path} - ${req.headers.origin || 'no origin'}`);
+  next();
+});
 
 // Track WebSocket clients
 const wsClients = new Map<string, WebSocket>();

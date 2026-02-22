@@ -98,6 +98,51 @@ export interface Session {
 // Database instance
 let db: sqlite3.Database | null = null;
 
+// Seed data
+async function seedData(): Promise<void> {
+  if (!db) return;
+  
+  // Check if we have any channels
+  const count = await new Promise<number>((resolve, reject) => {
+    db!.get('SELECT COUNT(*) as count FROM channels', (err, row: any) => {
+      if (err) reject(err);
+      else resolve(row?.count || 0);
+    });
+  });
+  
+  if (count === 0) {
+    console.log('Seeding default data...');
+    const createdAt = Date.now();
+    const updatedAt = createdAt;
+    
+    // Create default channel
+    await new Promise<void>((resolve, reject) => {
+      db!.run(
+        'INSERT INTO channels (id, name, description, openclawAgentId, systemPrompt, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?)',
+        ['default', 'General', 'Default channel', 'agent_1', '', createdAt, updatedAt],
+        (err) => {
+          if (err) reject(err);
+          else resolve();
+        }
+      );
+    });
+    
+    // Create default agent
+    await new Promise<void>((resolve, reject) => {
+      db!.run(
+        'INSERT INTO agents (id, name, sessionKey, isDefault, channelId) VALUES (?, ?, ?, ?, ?)',
+        ['agent_1', 'Assistant', 'agent:assistant:default', 1, 'default'],
+        (err) => {
+          if (err) reject(err);
+          else resolve();
+        }
+      );
+    });
+    
+    console.log('Default data seeded');
+  }
+}
+
 // Initialize database and create tables
 export async function initDatabase(path: string = './botschat.db'): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -107,7 +152,10 @@ export async function initDatabase(path: string = './botschat.db'): Promise<void
         return;
       }
       console.log('Connected to SQLite database');
-      createTables().then(() => resolve()).catch(reject);
+      createTables()
+        .then(() => seedData())
+        .then(() => resolve())
+        .catch(reject);
     });
   });
 }
