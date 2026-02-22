@@ -10,6 +10,7 @@ import { agentsRouter } from './routes/express/agents';
 import { channelsRouter } from './routes/express/channels';
 import { messagesRouter } from './routes/express/messages';
 import { modelsRouter } from './routes/express/models';
+import { pushRouter } from './routes/express/push';
 import { devAuthRouter } from './routes/express/dev-auth';
 import { AgentManager } from './agents/agent-manager';
 
@@ -89,6 +90,7 @@ app.use('/api/agents', agentsRouter);
 app.use('/api/channels', channelsRouter);
 app.use('/api/messages', messagesRouter);
 app.use('/api/models', modelsRouter);
+app.use('/api/push-tokens', pushRouter);
 app.use('/api/auth', devAuthRouter);
 
 // Health check
