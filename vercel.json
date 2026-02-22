@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npm run build -w packages/web",
+  "buildCommand": "cd packages/web && npm install && npm run build",
   "outputDirectory": "packages/web/dist",
   "framework": "vite",
   "rewrites": [
@@ -30,5 +30,6 @@
         }
       ]
     }
-  ]
+  ],
+  "installCommand": "cd packages/web && npm install"
 }
