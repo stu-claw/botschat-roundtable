@@ -19,9 +19,16 @@ const app = express();
 const server = createServer(app);
 const wss = new WebSocketServer({ server, path: '/api/ws' });
 
-// Middleware
+// Middleware - CORS allows multiple frontend origins
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: [
+    'http://localhost:3000',
+    'http://localhost:3003',
+    'http://localhost:3004',
+    'http://127.0.0.1:3000',
+    'http://127.0.0.1:3003',
+    'http://127.0.0.1:3004',
+  ],
   credentials: true
 }));
 app.use(express.json());
