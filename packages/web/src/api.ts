@@ -6,10 +6,10 @@ import { mockSwarmsApi, mockAuthApi, mockAgentsApi, USE_MOCK_API } from "./mock-
 
 /**
  * Backend API URL configuration
- * OpenClaw Integration: Connect to local OpenClaw gateway
+ * BotsChat Backend: Local API server for auth, swarms, database
+ * OpenClaw: WebSocket only for agent communication
  */
-const OPENCLAW_URL = "http://127.0.0.1:18789";
-const SERVER_URL = OPENCLAW_URL;
+const SERVER_URL = "http://localhost:3004";
 
 const API_BASE = `${SERVER_URL}/api`;
 
