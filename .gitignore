@@ -50,3 +50,4 @@ ios/DerivedData/
 
 # Firebase service account keys
 *-firebase-adminsdk-*.json
+.vercel

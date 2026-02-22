@@ -334,13 +334,13 @@ export function DeckView() {
                 </div>
               )}
               
-              <div ref={(el) => (messagesEndRefs.current[index] = el)} />
+              <div ref={(el) => { messagesEndRefs.current[index] = el; }} />
             </div>
 
             {/* Input */}
             <div className="p-2" style={{ borderTop: "1px solid var(--border)" }}>
               <input
-                ref={(el) => (inputRefs.current[index] = el)}
+                ref={(el) => { inputRefs.current[index] = el; }}
                 type="text"
                 placeholder={`Message ${agent.name}...`}
                 className="w-full px-3 py-2 text-caption rounded"
