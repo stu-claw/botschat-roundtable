@@ -1,6 +1,6 @@
 import React, { useReducer, useEffect, useCallback, useRef, useState } from "react";
 import { Capacitor } from "@capacitor/core";
-import { Group, Panel, useDefaultLayout } from "react-resizable-panels";
+import { PanelGroup, Panel, PanelResizeHandle } from "react-resizable-panels";
 import {
   appReducer,
   initialState,
@@ -1065,15 +1065,13 @@ export default function App() {
             <IconRail onToggleTheme={toggleTheme} onOpenSettings={() => setShowSettings(true)} theme={theme} />
 
             {/* Resizable panels: Sidebar + Content */}
-            <Group
-              orientation="horizontal"
-              defaultLayout={mainLayout.defaultLayout}
-              onLayoutChanged={mainLayout.onLayoutChanged}
+            <PanelGroup
+              direction="horizontal"
               id="botschat-main"
               className="flex-1"
             >
               {/* Sidebar panel */}
-              <Panel id="sidebar" defaultSize="15%" minSize="5%" maxSize="30%">
+              <Panel id="sidebar" defaultSize={15} minSize={5} maxSize={30}>
                 {isAutomationsView ? <CronSidebar /> : isSwarmsView ? <SwarmSidebar /> : <Sidebar />}
               </Panel>
 
@@ -1090,16 +1088,14 @@ export default function App() {
                 ) : (
                   <div className="flex-1 flex flex-col min-w-0 h-full">
                     {hasSession ? (
-                      <Group
-                        orientation="horizontal"
-                        defaultLayout={contentLayout.defaultLayout}
-                        onLayoutChanged={contentLayout.onLayoutChanged}
+                      <PanelGroup
+                        direction="horizontal"
                         id="botschat-content"
                       >
                         {/* JobList — conditional */}
                         {isBackgroundTask && (
                           <>
-                            <Panel id="joblist" defaultSize="15%" minSize="5%" maxSize="30%">
+                            <Panel id="joblist" defaultSize={15} minSize={5} maxSize={30}>
                               <JobList
                                 jobs={state.jobs}
                                 selectedJobId={state.selectedJobId}
@@ -1119,12 +1115,12 @@ export default function App() {
                         {state.activeThreadId && (
                           <>
                             <ResizeHandle />
-                            <Panel id="thread" defaultSize="28%" minSize="10%" maxSize="50%">
+                            <Panel id="thread" defaultSize={28} minSize={10} maxSize={50}>
                               <ThreadPanel sendMessage={sendMessage} />
                             </Panel>
                           </>
                         )}
-                      </Group>
+                      </PanelGroup>
                     ) : (
                       <div className="flex-1 flex items-center justify-center" style={{ background: "var(--bg-surface)" }}>
                         <div className="text-center">
@@ -1154,7 +1150,7 @@ export default function App() {
                   </div>
                 )}
               </Panel>
-            </Group>
+            </PanelGroup>
           </div>
 
           {/* Global debug log panel — collapsible at bottom */}

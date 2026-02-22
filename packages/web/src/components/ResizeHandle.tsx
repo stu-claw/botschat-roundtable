@@ -1,5 +1,5 @@
 import React from "react";
-import { Separator } from "react-resizable-panels";
+import { PanelResizeHandle } from "react-resizable-panels";
 
 type ResizeHandleProps = {
   direction?: "horizontal" | "vertical";
@@ -7,14 +7,14 @@ type ResizeHandleProps = {
 };
 
 /**
- * Custom drag handle for react-resizable-panels v4.
+ * Custom drag handle for react-resizable-panels.
  * Default (1px line) → Hover/Active (3px, blue highlight).
  */
 export function ResizeHandle({ direction = "horizontal", className = "" }: ResizeHandleProps) {
   const isVertical = direction === "vertical";
 
   return (
-    <Separator
+    <PanelResizeHandle
       className={`resize-handle group relative flex items-center justify-center ${
         isVertical ? "h-[6px] cursor-row-resize" : "w-[6px] cursor-col-resize"
       } ${className}`}
@@ -29,6 +29,6 @@ export function ResizeHandle({ direction = "horizontal", className = "" }: Resiz
         }`}
         style={{ background: "var(--border)" }}
       />
-    </Separator>
+    </PanelResizeHandle>
   );
 }

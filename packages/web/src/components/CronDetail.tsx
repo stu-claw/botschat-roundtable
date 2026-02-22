@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback, useState, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { Group, Panel, useDefaultLayout } from "react-resizable-panels";
+import { PanelGroup, Panel } from "react-resizable-panels";
 import { useAppState, useAppDispatch } from "../store";
 import { jobsApi, tasksApi } from "../api";
 import { ModelSelect } from "./ModelSelect";
@@ -792,15 +792,13 @@ function CronInfoAndContent({
 
   // Desktop: vertical resizable split between info and content
   return (
-    <Group
-      orientation="vertical"
-      defaultLayout={cronDetailVertLayout.defaultLayout}
-      onLayoutChanged={cronDetailVertLayout.onLayoutChanged}
+    <PanelGroup
+      direction="vertical"
       id="botschat-cron-detail-v"
       className="flex-1 min-h-0"
     >
       {/* Info section panel */}
-      <Panel id="cron-info" defaultSize="40%" minSize="5%" maxSize="70%">
+      <Panel id="cron-info" defaultSize={40} minSize={5} maxSize={70}>
         <div className="h-full" style={{ borderBottom: "1px solid var(--border)" }}>
           {infoSection}
         </div>
@@ -812,7 +810,7 @@ function CronInfoAndContent({
       <Panel id="cron-content-area">
         <CronContentPanels cronJobs={state.cronJobs} selectedCronJobId={state.selectedCronJobId} handleSelectJob={handleSelectJob} mobile={false} />
       </Panel>
-    </Group>
+    </PanelGroup>
   );
 }
 
@@ -934,15 +932,13 @@ function CronContentPanels({
 
   // --- Desktop: resizable horizontal panels ---
   return (
-    <Group
-      orientation="horizontal"
-      defaultLayout={cronLayout.defaultLayout}
-      onLayoutChanged={cronLayout.onLayoutChanged}
+    <PanelGroup
+      direction="horizontal"
       id="botschat-cron-content"
       className="flex-1 min-h-0"
     >
       {/* Job list panel */}
-      <Panel id="cron-jobs" defaultSize="20%" minSize="8%" maxSize="40%">
+      <Panel id="cron-jobs" defaultSize={20} minSize={8} maxSize={40}>
         {jobListContent}
       </Panel>
 
@@ -952,7 +948,7 @@ function CronContentPanels({
       <Panel id="cron-output">
         <JobOutputPanel jobs={cronJobs} selectedJobId={selectedCronJobId} />
       </Panel>
-    </Group>
+    </PanelGroup>
   );
 }
 
