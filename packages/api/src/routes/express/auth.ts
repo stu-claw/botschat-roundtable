@@ -102,4 +102,14 @@ router.get('/me', async (req, res) => {
   }
 });
 
+// Get auth config (which methods are available)
+router.get('/config', async (req, res) => {
+  res.json({
+    emailEnabled: true,
+    googleEnabled: false,
+    githubEnabled: false,
+    appleEnabled: false
+  });
+});
+
 export { router as authRouter };
