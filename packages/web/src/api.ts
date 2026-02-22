@@ -6,12 +6,10 @@ import { mockSwarmsApi, mockAuthApi, mockAgentsApi, USE_MOCK_API } from "./mock-
 
 /**
  * Backend API URL configuration
- * Development: Connect to local backend on port 3004
- * Production: Use relative URLs or production domain
+ * OpenClaw Integration: Connect to local OpenClaw gateway
  */
-const SERVER_URL = import.meta.env.DEV 
-  ? "http://localhost:3004" 
-  : (Capacitor.isNativePlatform() ? "https://console.botschat.app" : "");
+const OPENCLAW_URL = "http://127.0.0.1:18789";
+const SERVER_URL = OPENCLAW_URL;
 
 const API_BASE = `${SERVER_URL}/api`;
 

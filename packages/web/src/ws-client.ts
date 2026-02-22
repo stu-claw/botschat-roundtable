@@ -27,10 +27,8 @@ export class BotsChatWSClient {
     this.dispatch = useAppDispatch();
     this.onMessageCallback = opts.onMessage;
     this.onStatusChangeCallback = opts.onStatusChange;
-    // Connect to backend WebSocket (port 3004 in dev, same host in production)
-    const wsProtocol = window.location.protocol === "https:" ? "wss" : "ws";
-    const wsHost = import.meta.env.DEV ? "localhost:3004" : window.location.host;
-    this.url = `${wsProtocol}://${wsHost}/api/ws`;
+    // Connect to OpenClaw WebSocket gateway
+    this.url = "ws://127.0.0.1:18789/api/ws";
 
     // Bind event listener for sending swarm messages from RoundTableChat
     window.addEventListener("botschat:sendSwarmMessage", (event: Event) => {

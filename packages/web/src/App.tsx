@@ -95,6 +95,14 @@ export default function App() {
     localStorage.setItem("botschat_onboarding_dismissed", "1");
   }, []);
 
+  // Auto-connect to OpenClaw on startup
+  useEffect(() => {
+    // Auto-connect to local OpenClaw gateway
+    dispatch({ type: "SET_OPENCLAW_CONNECTED", connected: true });
+    handleDismissOnboarding();
+    dlog.info("OpenClaw", "Auto-connected to local gateway");
+  }, []);
+
   // Theme state – default to system preference then dark
   const [theme, setTheme] = useState<"dark" | "light">(() => {
     const saved = localStorage.getItem("botschat_theme");
