@@ -539,8 +539,6 @@ function CronInfoAndContent({
   handleModelSelectChange: (modelId: string) => Promise<void>;
   handleSelectJob: (jobId: string) => void;
 }) {
-  const cronDetailVertLayout = useDefaultLayout({ id: "botschat-cron-detail-v" });
-
   // Mobile drag-to-resize state
   const [mobileInfoPct, setMobileInfoPct] = useState(40);
   const mobileContainerRef = useRef<HTMLDivElement>(null);
@@ -827,7 +825,6 @@ function CronContentPanels({
   handleSelectJob: (jobId: string) => void;
   mobile: boolean;
 }) {
-  const cronLayout = useDefaultLayout({ id: "botschat-cron-content" });
   const [mobileShowOutput, setMobileShowOutput] = useState(false);
 
   // On mobile, tapping a job → show output; navigate back to list via header

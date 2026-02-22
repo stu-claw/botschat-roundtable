@@ -10,8 +10,11 @@
   },
   "dependencies": {
     "@capacitor/core": "^8.1.0",
+    "@capacitor/app": "^8.0.0",
     "@capacitor/keyboard": "^8.0.0",
+    "@capacitor/push-notifications": "^8.0.0",
     "@capacitor/status-bar": "^8.0.1",
+    "@capgo/capacitor-social-login": "^0.0.68",
     "@tailwindcss/typography": "^0.5.19",
     "e2e-crypto": "*",
     "firebase": "^12.9.0",

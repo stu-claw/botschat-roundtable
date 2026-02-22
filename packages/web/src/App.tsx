@@ -74,8 +74,6 @@ export default function App() {
 
   // Responsive layout hooks (must be called unconditionally)
   const isMobile = useIsMobile();
-  const mainLayout = useDefaultLayout({ id: "botschat-main" });
-  const contentLayout = useDefaultLayout({ id: "botschat-content" });
 
   const [dataConsentGiven, setDataConsentGiven] = useState(() => {
     return localStorage.getItem("botschat_data_consent") === "1";
