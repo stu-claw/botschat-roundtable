@@ -9,6 +9,7 @@ import { swarmsRouter } from './routes/express/swarms';
 import { agentsRouter } from './routes/express/agents';
 import { channelsRouter } from './routes/express/channels';
 import { messagesRouter } from './routes/express/messages';
+import { devAuthRouter } from './routes/express/dev-auth';
 import { AgentManager } from './agents/agent-manager';
 
 dotenv.config();
@@ -79,6 +80,7 @@ app.use('/api/swarms', swarmsRouter);
 app.use('/api/agents', agentsRouter);
 app.use('/api/channels', channelsRouter);
 app.use('/api/messages', messagesRouter);
+app.use('/api/auth', devAuthRouter);
 
 // Health check
 app.get('/api/health', (req, res) => {

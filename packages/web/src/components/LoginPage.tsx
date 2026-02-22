@@ -57,8 +57,8 @@ export function LoginPage() {
     });
   }, [firebaseEnabled]);
 
-  // Email/password login is permanently disabled — only OAuth (Google/GitHub) is allowed.
-  const emailEnabled = false;
+  // Email/password login enabled for local development
+  const emailEnabled = true;
   const configLoaded = authConfig !== null;
   const hasAnyLoginMethod = configLoaded && (firebaseEnabled || emailEnabled);
 
