@@ -1,77 +1,13 @@
 {
-  "name": "botschat",
-  "version": "0.1.16",
-  "description": "A self-hosted chat interface for OpenClaw AI agents",
-  "workspaces": [
-    "packages/*"
-  ],
+  "name": "botschat-roundtable",
+  "private": true,
+  "workspaces": ["packages/web", "packages/api"],
   "scripts": {
-    "dev": "bash scripts/dev.sh",
-    "dev:reset": "bash scripts/dev.sh reset",
-    "dev:api": "wrangler dev --config wrangler.toml",
-    "dev:web": "npm run dev -w packages/web",
-    "deploy": "wrangler deploy --config wrangler.toml",
-    "deploy:web": "npm run build -w packages/web && wrangler pages deploy packages/web/dist --project-name botschat",
-    "db:migrate": "wrangler d1 migrations apply botschat-db --local",
-    "db:migrate:remote": "wrangler d1 migrations apply botschat-db --remote",
-    "typecheck": "tsc --noEmit",
-    "build:plugin": "npm run build -w packages/plugin",
-    "ios:build": "npm run build -w packages/web && npx cap sync ios",
-    "ios:open": "npx cap open ios",
-    "ios:run": "npx cap run ios",
-    "ios:sync": "npx cap sync ios",
-    "android:build": "npm run build -w packages/web && npx cap sync android",
-    "android:open": "npx cap open android",
-    "android:run": "npx cap run android",
-    "android:sync": "npx cap sync android",
-    "test:e2e": "npx tsx scripts/verify-e2e.ts && npx tsx packages/e2e-crypto/e2e-crypto.test.ts",
-    "test:e2e-db": "npx tsx scripts/verify-e2e-db.ts"
-  },
-  "files": [
-    "packages/api/src/",
-    "packages/api/package.json",
-    "packages/api/tsconfig.json",
-    "packages/plugin/dist/",
-    "packages/plugin/openclaw.plugin.json",
-    "packages/plugin/package.json",
-    "packages/plugin/tsconfig.json",
-    "packages/web/src/",
-    "packages/web/dist/",
-    "packages/web/index.html",
-    "packages/web/package.json",
-    "packages/web/tsconfig.json",
-    "packages/web/vite.config.ts",
-    "packages/web/tailwind.config.js",
-    "packages/web/postcss.config.js",
-    "migrations/",
-    "scripts/",
-    "wrangler.toml",
-    "tsconfig.json"
-  ],
-  "publishConfig": {
-    "access": "public"
-  },
-  "license": "Apache-2.0",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/botschat-app/botsChat.git"
-  },
-  "devDependencies": {
-    "@capacitor/cli": "^8.1.0",
-    "typescript": "^5.7.0",
-    "wrangler": "^3.100.0"
+    "dev": "concurrently \"npm run dev --workspace packages/web\" \"npm run dev --workspace packages/api\"",
+    "build": "npm run build --workspace packages/web && npm run build --workspace packages/api",
+    "start": "npm run start --workspace packages/api"
   },
   "dependencies": {
-    "@capacitor/android": "^8.1.0",
-    "@capacitor/app": "^8.0.1",
-    "@capacitor/core": "^8.1.0",
-    "@capacitor/haptics": "^8.0.0",
-    "@capacitor/ios": "^8.1.0",
-    "@capacitor/keyboard": "^8.0.0",
-    "@capacitor/push-notifications": "^8.0.1",
-    "@capacitor/splash-screen": "^8.0.1",
-    "@capacitor/status-bar": "^8.0.1",
-    "@capgo/capacitor-social-login": "^8.3.1",
-    "react-resizable-panels": "^4.6.2"
+    "concurrently": "^7.6.0"
   }
 }

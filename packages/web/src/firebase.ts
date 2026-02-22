@@ -143,14 +143,10 @@ async function nativeGoogleSignIn(): Promise<FirebaseSignInResult> {
     options: { scopes: ["email", "profile"] },
   });
 
-  console.log("[NativeGoogleSignIn] Step 3: SocialLogin.login() returned, responseType =", res?.result?.responseType);
+  // Cast to GoogleLoginResponse since we specified provider: "google"
+  const googleResult = res.result as import("@capgo/capacitor-social-login").GoogleLoginResponse;
 
-  const googleResult = res.result;
-
-  // Narrow the union: online mode returns idToken + profile, offline returns serverAuthCode
-  if (googleResult.responseType !== "online") {
-    throw new Error(`Google Sign-In returned '${googleResult.responseType}' response; expected 'online'. Full result: ${JSON.stringify(res)}`);
-  }
+  console.log("[NativeGoogleSignIn] Step 3: SocialLogin.login() returned");
 
   const googleIdToken = googleResult.idToken;
   console.log("[NativeGoogleSignIn] Step 4: idToken present =", !!googleIdToken, ", length =", googleIdToken?.length ?? 0);

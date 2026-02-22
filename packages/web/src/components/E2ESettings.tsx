@@ -24,7 +24,8 @@ export function E2ESettings() {
   // Load notifyPreview preference from server
   useEffect(() => {
     authApi.me().then((data) => {
-      if (data?.settings?.notifyPreview) {
+      const settings = data?.settings as { notifyPreview?: boolean } | undefined;
+      if (settings?.notifyPreview) {
         setNotifyPreview(true);
       }
     }).catch(() => {});

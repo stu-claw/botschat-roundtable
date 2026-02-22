@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  api:
+    build: ./packages/api
+    ports:
+      - '3001:3001'
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - JWT_SECRET=${JWT_SECRET}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - PORT=3001
+      - FRONTEND_URL=${FRONTEND_URL}
+    volumes:
+      - ./packages/api:/usr/src/app
+      - /usr/src/app/node_modules

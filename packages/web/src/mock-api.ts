@@ -151,4 +151,4 @@ export const mockAgentsApi = {
 };
 
 // Enable/disable mock mode
-export const USE_MOCK_API = true;
+export const USE_MOCK_API = false;

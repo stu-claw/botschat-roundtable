@@ -5,13 +5,13 @@ import { dlog } from "./debug-log";
 import { mockSwarmsApi, mockAuthApi, mockAgentsApi, USE_MOCK_API } from "./mock-api";
 
 /**
- * In Capacitor (native app), the WebView loads from capacitor:// so relative
- * URLs won't reach the API server. We use the full production URL instead.
- * On the web, relative "/api" works because the same host serves both.
+ * Backend API URL configuration
+ * Development: Connect to local backend on port 3004
+ * Production: Use relative URLs or production domain
  */
-const SERVER_URL = Capacitor.isNativePlatform()
-  ? "https://console.botschat.app"
-  : "";
+const SERVER_URL = import.meta.env.DEV 
+  ? "http://localhost:3004" 
+  : (Capacitor.isNativePlatform() ? "https://console.botschat.app" : "");
 
 const API_BASE = `${SERVER_URL}/api`;
 
@@ -453,5 +453,4 @@ export const swarmsApi = USE_MOCK_API ? mockSwarmsApi : {
   // Round table messages
   sendRoundTableMessage: (swarmId: string, sessionId: string, data: { text: string; targetAgentIds?: string[] }) =>
     request<{ messageId: string; distributed: number }>("POST", `/swarms/${swarmId}/sessions/${sessionId}/messages`, data),
-};
 };
