@@ -2,6 +2,7 @@
 
 import { Capacitor } from "@capacitor/core";
 import { dlog } from "./debug-log";
+import { mockSwarmsApi, mockAuthApi, mockAgentsApi, USE_MOCK_API } from "./mock-api";
 
 /**
  * In Capacitor (native app), the WebView loads from capacitor:// so relative
@@ -133,22 +134,36 @@ export type AuthConfig = {
 
 export const authApi = {
   /** Fetch server-side auth configuration (which methods are available). */
-  config: () => request<AuthConfig>("GET", "/auth/config"),
+  config: () => USE_MOCK_API 
+    ? Promise.resolve({ emailEnabled: true, googleEnabled: true, githubEnabled: false, appleEnabled: false })
+    : request<AuthConfig>("GET", "/auth/config"),
   register: (email: string, password: string, displayName?: string) =>
-    request<AuthResponse>("POST", "/auth/register", { email, password, displayName }),
+    USE_MOCK_API
+    ? Promise.resolve({ id: "user_1", email, token: "mock_token", displayName: displayName || email })
+    : request<AuthResponse>("POST", "/auth/register", { email, password, displayName }),
   login: (email: string, password: string) =>
-    request<AuthResponse>("POST", "/auth/login", { email, password }),
+    USE_MOCK_API
+    ? Promise.resolve({ id: "user_1", email, token: "mock_token", displayName: email })
+    : request<AuthResponse>("POST", "/auth/login", { email, password }),
   /** Sign in with any Firebase provider (Google, GitHub, etc.) */
   firebase: (idToken: string) =>
-    request<AuthResponse>("POST", "/auth/firebase", { idToken }),
-  me: () => request<{ id: string; email: string; displayName: string | null; settings: UserSettings }>("GET", "/me"),
-  deleteAccount: () => request<{ ok: boolean }>("DELETE", "/auth/account"),
+    USE_MOCK_API
+    ? Promise.resolve({ id: "user_1", email: "demo@botschat.app", token: "mock_token", displayName: "Demo User" })
+    : request<AuthResponse>("POST", "/auth/firebase", { idToken }),
+  me: () => USE_MOCK_API
+    ? Promise.resolve({ id: "user_1", email: "demo@botschat.app", displayName: "Demo User", settings: {} })
+    : request<{ id: string; email: string; displayName: string | null; settings: UserSettings }>("GET", "/me"),
+  deleteAccount: () => USE_MOCK_API
+    ? Promise.resolve({ ok: true })
+    : request<{ ok: boolean }>("DELETE", "/auth/account"),
 };
 
 // ---- User settings ----
 export const meApi = {
   updateSettings: (data: { defaultModel?: string; notifyPreview?: boolean }) =>
-    request<{ ok: boolean; settings: UserSettings }>("PATCH", "/me", data),
+    USE_MOCK_API
+    ? Promise.resolve({ ok: true, settings: data })
+    : request<{ ok: boolean; settings: UserSettings }>("PATCH", "/me", data),
 };
 
 // ---- Models ----
@@ -159,7 +174,13 @@ export type ModelInfo = {
 };
 
 export const modelsApi = {
-  list: () => request<{ models: ModelInfo[] }>("GET", "/models"),
+  list: () => USE_MOCK_API
+    ? Promise.resolve({ models: [
+        { id: "claude-3-5-sonnet", name: "Claude 3.5 Sonnet", provider: "anthropic" },
+        { id: "gpt-4o", name: "GPT-4o", provider: "openai" },
+        { id: "gemini-1.5-pro", name: "Gemini 1.5 Pro", provider: "google" },
+      ]})
+    : request<{ models: ModelInfo[] }>("GET", "/models"),
 };
 
 // ---- Agents (OpenClaw-aligned: first level = Agent, then Session) ----
@@ -171,7 +192,7 @@ export type Agent = {
   channelId: string | null;
 };
 
-export const agentsApi = {
+export const agentsApi = USE_MOCK_API ? mockAgentsApi : {
   list: () => request<{ agents: Agent[] }>("GET", "/agents"),
 };
 
@@ -186,14 +207,30 @@ export type Channel = {
   updatedAt: number;
 };
 
+const mockChannels: Channel[] = [
+  { id: "ch_1", name: "General", description: "General conversation", openclawAgentId: "agent_1", systemPrompt: "", createdAt: Date.now() / 1000, updatedAt: Date.now() / 1000 },
+  { id: "ch_2", name: "Research", description: "Research assistant", openclawAgentId: "agent_2", systemPrompt: "", createdAt: Date.now() / 1000, updatedAt: Date.now() / 1000 },
+  { id: "ch_3", name: "Code", description: "Coding assistant", openclawAgentId: "agent_4", systemPrompt: "", createdAt: Date.now() / 1000, updatedAt: Date.now() / 1000 },
+];
+
 export const channelsApi = {
-  list: () => request<{ channels: Channel[] }>("GET", "/channels"),
-  get: (id: string) => request<Channel>("GET", `/channels/${id}`),
+  list: () => USE_MOCK_API
+    ? Promise.resolve({ channels: mockChannels })
+    : request<{ channels: Channel[] }>("GET", "/channels"),
+  get: (id: string) => USE_MOCK_API
+    ? Promise.resolve(mockChannels.find(c => c.id === id) || mockChannels[0])
+    : request<Channel>("GET", `/channels/${id}`),
   create: (data: { name: string; description?: string; systemPrompt?: string; openclawAgentId?: string }) =>
-    request<Channel>("POST", "/channels", data),
+    USE_MOCK_API
+    ? Promise.resolve({ id: `ch_${Date.now()}`, ...data, openclawAgentId: data.openclawAgentId || "agent_1", systemPrompt: data.systemPrompt || "", createdAt: Date.now() / 1000, updatedAt: Date.now() / 1000 } as Channel)
+    : request<Channel>("POST", "/channels", data),
   update: (id: string, data: Partial<Pick<Channel, "name" | "description" | "systemPrompt">>) =>
-    request<{ ok: boolean }>("PATCH", `/channels/${id}`, data),
-  delete: (id: string) => request<{ ok: boolean }>("DELETE", `/channels/${id}`),
+    USE_MOCK_API
+    ? Promise.resolve({ ok: true })
+    : request<{ ok: boolean }>("PATCH", `/channels/${id}`, data),
+  delete: (id: string) => USE_MOCK_API
+    ? Promise.resolve({ ok: true })
+    : request<{ ok: boolean }>("DELETE", `/channels/${id}`),
 };
 
 // ---- Sessions ----
@@ -391,7 +428,7 @@ export type SwarmMessage = {
   createdAt: number;
 };
 
-export const swarmsApi = {
+export const swarmsApi = USE_MOCK_API ? mockSwarmsApi : {
   list: () => request<{ swarms: Swarm[] }>("GET", "/swarms"),
   get: (id: string) => request<{ swarm: Swarm; members: SwarmMember[] }>("GET", `/swarms/${id}`),
   create: (data: { name: string; description?: string; mode: SwarmMode; leaderAgentId?: string; config?: Record<string, unknown> }) =>
@@ -416,4 +453,5 @@ export const swarmsApi = {
   // Round table messages
   sendRoundTableMessage: (swarmId: string, sessionId: string, data: { text: string; targetAgentIds?: string[] }) =>
     request<{ messageId: string; distributed: number }>("POST", `/swarms/${swarmId}/sessions/${sessionId}/messages`, data),
+};
 };
