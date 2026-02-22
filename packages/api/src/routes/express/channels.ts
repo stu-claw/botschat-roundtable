@@ -40,7 +40,7 @@ router.post('/', authMiddleware, async (req, res) => {
       id,
       name,
       description,
-      openclawAgentId,
+      openclawAgentId: openclawAgentId || 'default',
       systemPrompt
     });
     res.json(channel);
